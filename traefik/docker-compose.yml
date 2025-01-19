@@ -1,0 +1,38 @@
+name: proxy
+services:
+  traefik:
+    image: traefik:v3.3.1
+    container_name: traefik
+    command:
+      - "--log.level=INFO"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.network=content_host_network"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls.certResolver=letsencrypt"
+      - "--certificatesresolvers.letsencrypt.acme.email=pttp79@yahoo.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.tlsChallenge=true"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entryPoints.web.http.redirections.entrypoint.scheme=https"
+    ports:
+      - "80:80"         # HTTP
+      - "443:443"       # HTTPS
+      - "8080:8080"     # Dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "letsencrypt:/letsencrypt"  # Для хранения сертификатов
+    networks:
+      - content_host_network
+
+
+volumes:
+  letsencrypt:
+
+
+networks:
+  content_host_network:
+    external: true
