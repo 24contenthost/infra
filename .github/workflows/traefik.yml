@@ -1,9 +1,11 @@
-name: Deploy Traefik
+name: Deploy Traefik Infrastructure
 
 on:
   push:
     branches:
-      - main  # или ваша целевая ветка для деплоя
+      - main
+  workflow_dispatch:
+
 
 jobs:
   deploy_traefik:
@@ -11,15 +13,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up SSH key and deploy Traefik
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.2.0
         with:
-          host: your-vps-domain.com
-          username: user
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            cd /path/to/your/traefik
-            ./deploy.sh
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: whoami
