@@ -6,19 +6,26 @@ on:
       - main
   workflow_dispatch:
 
-
 jobs:
   deploy_traefik:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up SSH key and deploy Traefik
+      - name: Deploy Traefik (Copy and Run)
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          script: whoami
+          port: 22
+          source: "./traefik/docker-compose.yml"
+          target: "~/traefik/docker-compose.yml"
+          script: |
+            cd traefik
+            
+            docker-compose pull
+            
+            docker-compose up -d
+
