@@ -49,6 +49,7 @@ jobs:
             cd ~/db
             
             docker-compose pull
+            docker-compose down --remove-orphans
             docker-compose up -d
 
             # Checking MySQL status with retry
