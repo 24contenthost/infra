@@ -21,6 +21,22 @@ jobs:
           source: "./db/docker-compose.yml,./db/init.sh"
           target: "$HOME"
 
+      - name: Debug environment variables
+        run: |
+          echo "MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD"
+          echo "MYSQL_USER: $MYSQL_USER"
+          echo "MYSQL_PASSWORD: $MYSQL_PASSWORD"
+          echo "MYSQL_COMPOSE_NAME: $MYSQL_COMPOSE_NAME"
+          echo "MYSQL_CONTAINER_NAME: $MYSQL_CONTAINER_NAME"
+          echo "MYSQL_DATABASE_GALLERY: $MYSQL_DATABASE_GALLERY"
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_COMPOSE_NAME: ${{ secrets.MYSQL_COMPOSE_NAME }}
+          MYSQL_CONTAINER_NAME: ${{ secrets.MYSQL_CONTAINER_NAME }}
+          MYSQL_DATABASE_GALLERY: ${{ secrets.MYSQL_DATABASE_GALLERY }}
+
       - name: Deploy MySQL (Run docker-compose and initialize)
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -32,6 +48,13 @@ jobs:
             cd ~/db
             chmod +x init.sh
             ./init.sh
+        run: |
+          echo "MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD"
+          echo "MYSQL_USER: $MYSQL_USER"
+          echo "MYSQL_PASSWORD: $MYSQL_PASSWORD"
+          echo "MYSQL_COMPOSE_NAME: $MYSQL_COMPOSE_NAME"
+          echo "MYSQL_CONTAINER_NAME: $MYSQL_CONTAINER_NAME"
+          echo "MYSQL_DATABASE_GALLERY: $MYSQL_DATABASE_GALLERY"
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
           MYSQL_USER: ${{ secrets.MYSQL_USER }}
