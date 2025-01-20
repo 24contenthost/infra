@@ -41,9 +41,10 @@ jobs:
             # Debug environment variables
             echo "MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD"
             echo "MYSQL_USER: $MYSQL_USER"
-            echo "MYSQL_PASSWORD: $MYSQL_PASSWORD"
-            echo "MYSQL_COMPOSE_NAME: $MYSQL_COMPOSE_NAME"
+            echo "MYSQL_PASSWORD: $MYSQL_PASSWORD"   
+            echo "MYSQL_SERVICE_NAME: $MYSQL_SERVICE_NAME"
             echo "MYSQL_CONTAINER_NAME: $MYSQL_CONTAINER_NAME"
+            echo "MYSQL_PORT: $MYSQL_PORT"
             echo "MYSQL_DATABASE_GALLERY: $MYSQL_DATABASE_GALLERY"
             
             # Navigate to the db folder and initialize
@@ -83,6 +84,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
           MYSQL_USER: ${{ secrets.MYSQL_USER }}
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_COMPOSE_NAME: ${{ secrets.MYSQL_COMPOSE_NAME }}
+          MYSQL_SERVICE_NAME: ${{ secrets.MYSQL_SERVICE_NAME }}
           MYSQL_CONTAINER_NAME: ${{ secrets.MYSQL_CONTAINER_NAME }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
           MYSQL_DATABASE_GALLERY: ${{ secrets.MYSQL_DATABASE_GALLERY }}
