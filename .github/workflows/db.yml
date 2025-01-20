@@ -21,7 +21,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: "./mysql/docker-compose.yml,./mysql/init.sh"
+          source: "./db/docker-compose.yml,./db/init.sh"
           target: "$HOME"
 
       - name: Deploy MySQL (Run docker-compose and initialize)
