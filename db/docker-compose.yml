@@ -1,0 +1,22 @@
+name: ${MYSQL_COMPOSE_NAME}
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ${MYSQL_CONTAINER_NAME}
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - content_host_network
+    restart: always
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  content_host_network:
+    external: true
