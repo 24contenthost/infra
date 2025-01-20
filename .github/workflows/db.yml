@@ -1,7 +1,9 @@
 name: Deploy MySQL Infrastructure
 
 on:
-
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -12,14 +14,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy docker-compose.yml and init_mysql.sh to server
+      - name: Copy docker-compose.yml and init.sh to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: "./mysql/docker-compose.yml,./mysql/init_mysql.sh"
+          source: "./mysql/docker-compose.yml,./mysql/init.sh"
           target: "$HOME"
 
       - name: Deploy MySQL (Run docker-compose and initialize)
@@ -29,15 +31,14 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          env:
-            MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-            MYSQL_USER: ${{ secrets.MYSQL_USER }}
-            MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-            MYSQL_COMPOSE_NAME: ${{ secrets.MYSQL_COMPOSE_NAME }}
-            MYSQL_CONTAINER_NAME: ${{ secrets.MYSQL_CONTAINER_NAME }}
-            MYSQL_DATABASE_GALLERY: ${{ secrets.MYSQL_DATABASE_GALLERY }}
-
           script: |
             cd ~/mysql
             chmod +x init.sh
             ./init.sh
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_COMPOSE_NAME: ${{ secrets.MYSQL_COMPOSE_NAME }}
+          MYSQL_CONTAINER_NAME: ${{ secrets.MYSQL_CONTAINER_NAME }}
+          MYSQL_DATABASE_GALLERY: ${{ secrets.MYSQL_DATABASE_GALLERY }}
