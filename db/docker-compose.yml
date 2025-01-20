@@ -1,6 +1,5 @@
-name: ${MYSQL_COMPOSE_NAME}
 services:
-  mysql:
+  ${MYSQL_SERVICE_NAME}:
     image: mysql:8.0
     container_name: ${MYSQL_CONTAINER_NAME}
     environment:
@@ -12,6 +11,8 @@ services:
     networks:
       - content_host_network
     restart: always
+    expose:
+      - "${MYSQL_PORT}"  # Открытие порта внутри Docker-сети
 
 volumes:
   mysql_data:

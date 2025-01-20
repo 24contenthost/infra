@@ -33,8 +33,9 @@ jobs:
             export MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
             export MYSQL_USER=${{ secrets.MYSQL_USER }}
             export MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-            export MYSQL_COMPOSE_NAME=${{ secrets.MYSQL_COMPOSE_NAME }}
+            export MYSQL_SERVICE_NAME=${{ secrets.MYSQL_SERVICE_NAME }}
             export MYSQL_CONTAINER_NAME=${{ secrets.MYSQL_CONTAINER_NAME }}
+            export MYSQL_PORT=${{ secrets.MYSQL_PORT }}
             export MYSQL_DATABASE_GALLERY=${{ secrets.MYSQL_DATABASE_GALLERY }}
 
             # Debug environment variables
