@@ -11,14 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy docker-compose.yml and init.sh to server
+      - name: Copy docker-compose.yml to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: "./db/docker-compose.yml,./db/init.sh"
+          source: "./db/docker-compose.yml"
           target: "$HOME"
 
       - name: Deploy and Debug MySQL (Run docker-compose, initialize and debug env variables)
@@ -29,6 +29,14 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            # Экспортируем переменные окружения
+            export MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+            export MYSQL_USER=${{ secrets.MYSQL_USER }}
+            export MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+            export MYSQL_COMPOSE_NAME=${{ secrets.MYSQL_COMPOSE_NAME }}
+            export MYSQL_CONTAINER_NAME=${{ secrets.MYSQL_CONTAINER_NAME }}
+            export MYSQL_DATABASE_GALLERY=${{ secrets.MYSQL_DATABASE_GALLERY }}
+
             # Debug environment variables
             echo "MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD"
             echo "MYSQL_USER: $MYSQL_USER"
@@ -43,26 +51,24 @@ jobs:
             docker-compose pull
             
             docker-compose up -d
-          
+            
             echo "Waiting for MySQL to start..."
             until docker exec $MYSQL_CONTAINER_NAME mysqladmin ping --silent; do
              sleep 1
             done
             echo "MySQL is ready!"
-            #
-            ## Создание базы данных для галереи
-            #echo "Creating database for gallery..."
-            #docker exec $MYSQL_CONTAINER_NAME mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE_GALLERY}\`;"
-            #
-            ## Создание пользователя и предоставление прав
-            #echo "Creating user and granting privileges..."
-            #docker exec $MYSQL_CONTAINER_NAME mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-            #docker exec $MYSQL_CONTAINER_NAME mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE_GALLERY}\`.* TO '${MYSQL_USER}'@'%';"
-            #docker exec $MYSQL_CONTAINER_NAME mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "FLUSH PRIVILEGES;"
-            #
-            #echo "Database and user initialization completed."
-        
-
+            
+            # Creating database for gallery
+            echo "Creating database for gallery..."
+            docker exec $MYSQL_CONTAINER_NAME mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE_GALLERY}\`;"
+            
+            # Creating user and granting privileges
+            echo "Creating user and granting privileges..."
+            docker exec $MYSQL_CONTAINER_NAME mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
+            docker exec $MYSQL_CONTAINER_NAME mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE_GALLERY}\`.* TO '${MYSQL_USER}'@'%';"
+            docker exec $MYSQL_CONTAINER_NAME mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "FLUSH PRIVILEGES;"
+            
+            echo "Database and user initialization completed."
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
           MYSQL_USER: ${{ secrets.MYSQL_USER }}
