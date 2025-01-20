@@ -29,7 +29,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            # Экспортируем переменные окружения
+            # Script for init mysql first time
+  
             export MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
             export MYSQL_USER=${{ secrets.MYSQL_USER }}
             export MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
@@ -50,8 +51,8 @@ jobs:
             # Navigate to the db folder and initialize
             cd ~/db
             
+            # Pull the latest images and start the containers
             docker-compose pull
-            docker-compose down --remove-orphans
             docker-compose up -d
 
             # Checking MySQL status with retry
