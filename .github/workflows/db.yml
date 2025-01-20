@@ -49,12 +49,20 @@ jobs:
             cd ~/db
             
             docker-compose pull
-            
             docker-compose up -d
-            
+
+            # Checking MySQL status with retry
             echo "Waiting for MySQL to start..."
-            until docker exec $MYSQL_CONTAINER_NAME mysqladmin ping --silent; do
-             sleep 1
+            attempts=0
+            max_attempts=30
+            while ! docker exec $MYSQL_CONTAINER_NAME mysqladmin --user=root --password=${MYSQL_ROOT_PASSWORD} ping --silent; do
+              if [ $attempts -ge $max_attempts ]; then
+                echo "MySQL did not start in time."
+                exit 1
+              fi
+              echo "MySQL is not ready, retrying..."
+              attempts=$((attempts+1))
+              sleep 2
             done
             echo "MySQL is ready!"
             
